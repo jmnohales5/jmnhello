@@ -1,4 +1,4 @@
-// Lista de tareas: las tareas se guardan en localStorage del navegador.
+// Lista de tareas: guarda las tareas en localStorage para que persistan al recargar.
 const STORAGE_KEY = "jmnhello-tasks";
 
 const form = document.getElementById("task-form");
@@ -6,7 +6,7 @@ const input = document.getElementById("task-input");
 const list = document.getElementById("task-list");
 const emptyMessage = document.getElementById("empty-message");
 
-// Carga las tareas guardadas; si no hay nada o el JSON está roto, empieza vacío.
+// Lee las tareas guardadas; si el JSON está corrupto, empieza con una lista vacía.
 function loadTasks() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -19,54 +19,53 @@ function saveTasks(tasks) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 }
 
-// Dibuja la lista completa a partir del array de tareas.
+// Dibuja la lista completa a partir del estado. Es simple y suficiente para pocas tareas.
 function render(tasks) {
-  list.innerHTML = "";
-  emptyMessage.hidden = tasks.length > 0;
+  list.replaceChildren();
 
   tasks.forEach((task) => {
-    const item = document.createElement("li");
+    const li = document.createElement("li");
+    li.className = "task-item" + (task.done ? " done" : "");
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.id = `task-${task.id}`;
     checkbox.checked = task.done;
+    checkbox.setAttribute("aria-label", "Marcar como hecha: " + task.text);
     checkbox.addEventListener("change", () => toggleTask(task.id));
 
-    const label = document.createElement("label");
-    label.htmlFor = checkbox.id;
-    label.textContent = task.text;
-    if (task.done) label.classList.add("done");
+    const text = document.createElement("span");
+    text.className = "task-text";
+    text.textContent = task.text;
 
     const deleteBtn = document.createElement("button");
     deleteBtn.type = "button";
     deleteBtn.className = "delete-btn";
     deleteBtn.textContent = "Borrar";
-    deleteBtn.setAttribute("aria-label", `Borrar tarea: ${task.text}`);
+    deleteBtn.setAttribute("aria-label", "Borrar tarea: " + task.text);
     deleteBtn.addEventListener("click", () => deleteTask(task.id));
 
-    item.append(checkbox, label, deleteBtn);
-    list.appendChild(item);
+    li.append(checkbox, text, deleteBtn);
+    list.appendChild(li);
   });
+
+  emptyMessage.hidden = tasks.length > 0;
 }
 
 function addTask(text) {
   const tasks = loadTasks();
-  tasks.push({ id: Date.now(), text, done: false });
+  tasks.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2), text, done: false });
   saveTasks(tasks);
   render(tasks);
 }
 
 function toggleTask(id) {
-  const tasks = loadTasks().map((task) =>
-    task.id === id ? { ...task, done: !task.done } : task
-  );
+  const tasks = loadTasks().map((t) => (t.id === id ? { ...t, done: !t.done } : t));
   saveTasks(tasks);
   render(tasks);
 }
 
 function deleteTask(id) {
-  const tasks = loadTasks().filter((task) => task.id !== id);
+  const tasks = loadTasks().filter((t) => t.id !== id);
   saveTasks(tasks);
   render(tasks);
 }
