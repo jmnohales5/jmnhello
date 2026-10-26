@@ -1,75 +1,136 @@
+/* Paleta neutra con un único color de acento (índigo) para acciones y foco. */
+:root {
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --text: #111827;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-soft: #eef2ff;
+  --danger: #b91c1c;
+  --danger-soft: #fef2f2;
+  --focus: #a5b4fc;
+  --radius: 12px;
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background: #f4f5f7;
-  color: #1f2933;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
 }
 
 .container {
-  max-width: 480px;
-  margin: 48px auto;
-  padding: 24px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  max-width: 520px;
+  margin: 64px auto;
+  padding: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.04), 0 8px 24px rgba(17, 24, 39, 0.06);
 }
 
 h1 {
-  margin-top: 0;
-  font-size: 1.6rem;
+  margin: 0 0 24px;
+  font-size: 1.5rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
 }
 
 .task-form {
   display: flex;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .task-form input {
   flex: 1;
-  padding: 10px 12px;
-  font-size: 1rem;
-  border: 1px solid #cbd2d9;
+  min-width: 0;
+  padding: 10px 14px;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
   border-radius: 8px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.task-form input::placeholder {
+  color: var(--text-muted);
+}
+
+.task-form input:hover {
+  border-color: #9ca3af;
+}
+
+.task-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 button {
   padding: 10px 16px;
-  font-size: 1rem;
-  border: none;
+  font: inherit;
+  font-weight: 500;
+  border: 1px solid transparent;
   border-radius: 8px;
-  background: #2563eb;
+  background: var(--accent);
   color: #ffffff;
   cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 button:hover {
-  background: #1d4ed8;
+  background: var(--accent-hover);
+}
+
+button:active {
+  transform: translateY(1px);
 }
 
 button:focus-visible,
 input:focus-visible,
 .task-list input[type="checkbox"]:focus-visible {
-  outline: 3px solid #93c5fd;
+  outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
 
 .task-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 16px 0 0;
 }
 
 .task-list li {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid #e4e7eb;
+  gap: 12px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.task-list li:last-child {
+  border-bottom: none;
+}
+
+.task-list input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
 }
 
 .task-list label {
@@ -79,30 +140,53 @@ input:focus-visible,
 }
 
 .task-list .done {
-  color: #9aa5b1;
+  color: var(--text-muted);
   text-decoration: line-through;
+  text-decoration-color: #9ca3af;
 }
 
 .delete-btn {
   padding: 4px 10px;
-  background: #e4e7eb;
-  color: #323f4b;
+  font-size: 0.875rem;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-strong);
 }
 
 .delete-btn:hover {
-  background: #cbd2d9;
+  background: var(--danger-soft);
+  color: var(--danger);
+  border-color: #fecaca;
 }
 
 .empty-message {
-  color: #7b8794;
+  margin: 24px 0 0;
+  color: var(--text-muted);
   text-align: center;
+  font-size: 0.95rem;
 }
 
 .visually-hidden {
   position: absolute;
   width: 1px;
   height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 560px) {
+  .container {
+    margin: 24px 16px;
+    padding: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
 }
